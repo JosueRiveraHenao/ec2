@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class MessageServiceImpl implements IMessageService {
     @Override
     public String getMessage() {
-        return "Message by default";
+        return "Message by default 2";
     }
 
     @Override
