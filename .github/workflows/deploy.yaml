@@ -1,0 +1,70 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      EC2_PRIVATE_KEY: |
+        -----BEGIN OPENSSH PRIVATE KEY-----
+        b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+        NhAAAAAwEAAQAAAQEAxHaP1AghhZOcaxTar4gSJ4XS61nT6bvacSvu37ByTSVLNs5tBZHY
+        bh8ie5D8SFswWSlFvm/asr0N8FgST2GpFkVPNevSqhAk2b0G/SeUN9NmE0z9pd2D9LyrKU
+        t9HH4qBYpWQGZcBOXzcVMofOg/UlhJC8rTN8IIvBpqkVB5dwEv7dahq0VSKcLCtiXZbSo+
+        932/3YnwlMkt+R7LqUIcGVFVr5vtwSvGjK47GnvRWx9IAjYqX/w38XlS9ayZQDqS4SoLYJ
+        vWr98QX3JOCR3gSsKoDR11O2HPUxM6QT0JNknSM5zk8Fpg16KEMnxMvl/6slb8jdNY5ZXt
+        aAJBr7G8kwAAA9CXjO/ql4zv6gAAAAdzc2gtcnNhAAABAQDEdo/UCCGFk5xrFNqviBInhd
+        LrWdPpu9pxK+7fsHJNJUs2zm0FkdhuHyJ7kPxIWzBZKUW+b9qyvQ3wWBJPYakWRU8169Kq
+        ECTZvQb9J5Q302YTTP2l3YP0vKspS30cfioFilZAZlwE5fNxUyh86D9SWEkLytM3wgi8Gm
+        qRUHl3AS/t1qGrRVIpwsK2JdltKj73fb/difCUyS35HsupQhwZUVWvm+3BK8aMrjsae9Fb
+        H0gCNipf/DfxeVL1rJlAOpLhKgtgm9av3xBfck4JHeBKwqgNHXU7Yc9TEzpBPQk2SdIznO
+        TwWmDXooQyfEy+X/qyVvyN01jlle1oAkGvsbyTAAAAAwEAAQAAAQAZUQKUEEoq5DcjW11v
+        gil+EKd52X+jySfLLp31EvqKXhRqUcEdwcoHLW7sR7t4ItFro+m6B8BBs81V29uG1tm1pi
+        Ugwyyd6pT9E/flwRG/UeKqTmEJ3IOHvZTm2N9HP9YavwACA3lhzjSyipnsjUxfnZh9cwZd
+        0zH8n1Yn4fFiYrnOa/ehLK5VjaXARdJdyT3C2Zh75YrjHh2Cr/xVmByOmup6r7DU0JXCwK
+        MC5VGMubO5sVjtAR32LosGQ7Yu8c/evIsC3CjutKq7yCe3Tew5sbEZvjkBh19uZjHeaLUs
+        j8oa/OUbPAtB2s8+dNZrV1jA+T7YLFI3R3NgVIMxRBUdAAAAgQDJc5lU1mGOGMT+7xXawB
+        6CLYJCI3Wlo37CVc/T2qZSJNc7Wwc04Ldj2nqUeY1J8p6YiJua2KTzC6Fk7n3nfG7AXbHL
+        GwQ05pUjP98XRKPVS2ogLSLQ3E7xaXMZhcLQArVHQZbVmXiyKOL4bJaE9FAJ3J7nWJzxqy
+        /eK7ujGtEQWwAAAIEA3J4gHqNFN8ah101irvVd5KEMl7vhXHE17C1GK48lZdqkfnZn8VaA
+        XaNjUMI9C9YeTO3e/Nxvm4szkpOM1n27UvC6P3GZuRnBRR7BXEZ4iimuxOw/LMT+0JqmAD
+        kbB5gr99DEnQhFGKZHaskMR+uI1M8v/OrlXfzy9ET45hj1vDcAAACBAOP4udmLvgPWUwiA
+        kO16xpofvHCHnHCSWYQ/sC1EpKl4qkWKSSTidv2u7DGewkRNm+NEPkgxqCgUJhkoAaqZt0
+        JOpc/xZdeY6ECpjY8P0axz3ZPGhSZP4zdKsGcYIDM+Bl7UysnlT1or7YJOw7jvI8wN9vZ1
+        hT3EObS2InyZ/qyFAAAAFXJvb3RAaXAtMTcyLTMxLTE4LTE1MwECAwQF
+        -----END OPENSSH PRIVATE KEY-----
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ec2_spring_boot .
+
+      - name: Copy Docker Image to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: 18.212.251.224
+          username: root
+          key: ${{ env.EC2_PRIVATE_KEY }}
+          source: "./"
+          target: "/"
+
+      - name: SSH into EC2 and Run Docker Container
+        uses: appleboy/ssh-action@master
+        with:
+          host: 18.212.251.224
+          username: root
+          key: ${{ env.EC2_PRIVATE_KEY }}
+          script: docker run -d -p 8082:8082 ec2_spring_boot
