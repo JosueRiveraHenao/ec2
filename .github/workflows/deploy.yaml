@@ -71,11 +71,6 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: List location
-        run: |
-          ls
-          pwd
-
       - name: Make Gradlew Executable
         run: |
           chmod +x ./gradlew
@@ -83,7 +78,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Copy Prject to EC2
+      - name: Copy Project to EC2
         uses: appleboy/scp-action@master
         with:
           host: 18.212.251.224
@@ -100,7 +95,5 @@ jobs:
           key: ${{ env.EC2_PRIVATE_KEY }}
           script: |
             cd ..
-            ls
-            pwd
             docker build -t ec2_spring_boot .
             docker run -d -p 8082:8082 ec2_spring_boot
