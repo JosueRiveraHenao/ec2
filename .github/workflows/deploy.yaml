@@ -83,7 +83,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Copy Docker Image to EC2
+      - name: Copy Prject to EC2
         uses: appleboy/scp-action@master
         with:
           host: 18.212.251.224
@@ -99,6 +99,7 @@ jobs:
           username: root
           key: ${{ env.EC2_PRIVATE_KEY }}
           script: |
+            cd ..
             ls
             pwd
             docker build -t ec2_spring_boot .
