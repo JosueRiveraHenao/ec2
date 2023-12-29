@@ -43,6 +43,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Remove conflicting Docker packages
+        run: |
+          sudo apt-get remove containerd.io
+          sudo apt-get autoremove
+
       - name: Install Docker
         run: |
           sudo apt-get update
