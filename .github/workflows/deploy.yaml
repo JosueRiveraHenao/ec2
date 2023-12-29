@@ -94,6 +94,5 @@ jobs:
           username: root
           key: ${{ env.EC2_PRIVATE_KEY }}
           script: |
-            cd ..
-            docker build -t ec2_spring_boot .
-            docker run -d -p 8082:8082 ec2_spring_boot
+            cd ../scripts/
+            bash docker_process.sh
