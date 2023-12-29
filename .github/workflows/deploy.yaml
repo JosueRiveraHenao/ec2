@@ -70,11 +70,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-          
-      - name: Install Gradle
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
 
       - name: List location
         run: |
@@ -87,20 +82,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Remove conflicting Docker packages
-        run: |
-          sudo apt-get remove containerd.io
-          sudo apt-get autoremove
-
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-
-      - name: Build Docker Image
-        run: |
-          docker build -t ec2_spring_boot .
 
       - name: Copy Docker Image to EC2
         uses: appleboy/scp-action@master
@@ -117,4 +98,6 @@ jobs:
           host: 18.212.251.224
           username: root
           key: ${{ env.EC2_PRIVATE_KEY }}
-          script: docker run -d -p 8082:8082 ec2_spring_boot
+          script: |
+            docker build -t ec2_spring_boot .
+            docker run -d -p 8082:8082 ec2_spring_boot
