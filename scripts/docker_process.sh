@@ -2,8 +2,8 @@
 
 name_image="ec2_spring_boot"
 
-docker ps -q -f ancestor=$name_image | xargs -r docker stop
-docker ps -q -f ancestor=$name_image | xargs -r docker rm
+docker stop $(docker ps -q --filter name=$name_image)
+docker rm $(docker ps -aq --filter name=$name_image)
 
 cd ../
 
