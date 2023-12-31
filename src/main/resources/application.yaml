@@ -1,4 +1,4 @@
 server:
-  port: 8082
+  port: ${PORT_APP}
   servlet:
-    context-path: '/api/v1'
+    context-path: ${CONTEXT_PATH_APP}
