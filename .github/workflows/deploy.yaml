@@ -23,6 +23,13 @@ jobs:
         run: |
           chmod +x ./gradlew
 
+      - name: Add all env in to Pipeline
+        run: |
+          export PORT_APP=${{ vars.PORT_APP }}
+          export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
+          echo "PORT_APP=${{ vars.PORT_APP }} CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}"
+          echo "PORT_APP=$PORT_APP CONTEXT_PATH_APP=$CONTEXT_PATH_APP"
+
       - name: Build with Gradle
         run: ./gradlew build
 
