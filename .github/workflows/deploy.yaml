@@ -47,4 +47,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd ../scripts/
+            export PORT_APP=${{ vars.PORT_APP }}
+            export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
+            echo "PORT_APP=$PORT_APP CONTEXT_PATH_APP=$CONTEXT_PATH_APP"
             bash docker_process.sh
