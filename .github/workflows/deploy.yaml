@@ -14,7 +14,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Show env GitHub
-        run: echo secrets.HOST_EC2
+        run: | 
+          echo "El valor del secreto es: ${{ secrets.HOST_EC2 }}"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
