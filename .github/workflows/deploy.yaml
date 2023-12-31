@@ -27,7 +27,6 @@ jobs:
         run: |
           export PORT_APP=${{ vars.PORT_APP }}
           export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
-          echo "PORT_APP=$PORT_APP CONTEXT_PATH_APP=$CONTEXT_PATH_APP"
           ./gradlew build
 
       - name: Copy Project to EC2
@@ -49,5 +48,4 @@ jobs:
             cd ../scripts/
             export PORT_APP=${{ vars.PORT_APP }}
             export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
-            echo "PORT_APP=$PORT_APP CONTEXT_PATH_APP=$CONTEXT_PATH_APP"
             bash docker_process.sh
