@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.USERNAME_EC2 }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "./"
-          target: "/ec2/"
+          target: "/ec2_test/"
 
       - name: SSH into EC2 and Run Docker Container
         uses: appleboy/ssh-action@master
@@ -54,7 +54,7 @@ jobs:
           username: ${{ secrets.USERNAME_EC2 }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd ../ec2/scripts/
+            cd /ec2_test/scripts/
             export PORT_APP=${{ vars.PORT_APP }}
             export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
             bash docker_process.sh
