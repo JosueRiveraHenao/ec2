@@ -29,15 +29,6 @@ jobs:
           export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
           ./gradlew build
 
-      - name: Debug SSH Connection
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_EC2 }}
-          username: ${{ secrets.USERNAME_EC2 }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            echo "Testing SSH connection"
-
       - name: Copy Project to EC2
         uses: appleboy/scp-action@master
         with:
@@ -45,7 +36,7 @@ jobs:
           username: ${{ secrets.USERNAME_EC2 }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "./"
-          target: "/"
+          target: "/ec2_test/"
 
       - name: SSH into EC2 and Run Docker Container
         uses: appleboy/ssh-action@master
@@ -54,7 +45,7 @@ jobs:
           username: ${{ secrets.USERNAME_EC2 }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd ../scripts
+            cd ../ec2_test/scripts
             export PORT_APP=${{ vars.PORT_APP }}
             export CONTEXT_PATH_APP=${{ vars.CONTEXT_PATH_APP }}
             bash docker_process.sh
